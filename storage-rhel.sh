@@ -17,7 +17,7 @@ do
 d=$(iscsiadm -m session -r $i -P3 | grep "Attached scsi disk" | awk '{print $4}') # and find disks names
 if [[ $(echo $d |wc -w) > 1 ]] # if session has two or more disks
   then
-  ip=$(iscsiadm -m session -r 6 -P 3 |grep "Current Portal:" |awk 'BEGIN {FS=":"} {print $2}')
+  ip=$(iscsiadm -m session -r $i -P 3 |grep "Current Portal:" |awk 'BEGIN {FS=":"} {print $2}')
   for a in $d
   do
     lun=$(iscsiadm -m session -r $i -P 3 | sed -n -e '/'$a'/{x;p;d}' -e x | awk '{print $7}') # goes through them and print lun
@@ -25,7 +25,7 @@ if [[ $(echo $d |wc -w) > 1 ]] # if session has two or more disks
     count=$((count+1))
   done
   else
-  ip2=$(iscsiadm -m session -r 6 -P 3 |grep "Current Portal:" |awk 'BEGIN {FS=":"} {print $2}')
+  ip2=$(iscsiadm -m session -r $i -P 3 |grep "Current Portal:" |awk 'BEGIN {FS=":"} {print $2}')
   lun2=$(iscsiadm -m session -r $i -P 3 | sed -n -e '/'$(iscsiadm -m session -r $i -P3 | grep "Attached scsi disk" | awk '{print $4}')'/{x;p;d}' -e x | awk '{print $7}')
   disks[$count]=$(echo -n "iSCSI| |"$ip2"|"$d"|"$lun2)
   count=$((count+1))
